@@ -1,0 +1,2 @@
+id,username,password,first_name,last_name,role,special_roles,screen_permissions,admin_until,department_lead,must_change_password,created_at
+1,admin,$2y$10$umsuxs2YDLOlfRE9g000oOA3cnF5MOvnVBtd5BQO0gx8emlnkX5iC,Admin,User,admin,1,,,,0,"2026-01-07 02:53:39"

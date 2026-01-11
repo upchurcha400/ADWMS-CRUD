@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - American Darling WMS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      .login-container {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 400px;
+      }
+      .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .login-header img {
+        max-width: 150px;
+        margin-bottom: 15px;
+      }
+      .login-header h1 {
+        color: #1a1a2e;
+        font-size: 1.5rem;
+      }
+      .login-header p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: #00ff88;
+        box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+      }
+      .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(26, 26, 46, 0.4);
+      }
+      .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        text-align: center;
+      }
+      .error-message.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-header">
+        <img
+          src="http://rma.anthonyupchurch.tech/final/img/logo.jpg"
+          alt="American Darling"
+          onerror="this.style.display='none'"
+        />
+        <h1>American Darling WMS</h1>
+        <p>Warehouse Management System</p>
+      </div>
+
+      <div class="error-message" id="errorMessage"></div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required autofocus />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit" class="btn-login">Login</button>
+      </form>
+    </div>
+
+    <script>
+      // Check if already logged in
+      (async function (check_session) {
+        try {
+          const res = fetch("api.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "check_session" }),
+          });
+          const data = await res.json();
+          if (data.authenticated) {
+            window.location.href = "menu.html";
+          }
+        } catch (e) {
+          console.error("Session check failed:", e);
+        }
+      });
+
+      async function handleLogin(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorDiv = document.getElementById("errorMessage");
+
+        errorDiv.classList.remove("show");
+
+        try {
+          const res = await fetch("api.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "login",
+              username: username,
+              password: password,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            window.location.href = "menu.html";
+          } else {
+            errorDiv.textContent = data.error || "Invalid credentials";
+            errorDiv.classList.add("show");
+          }
+        } catch (error) {
+          errorDiv.textContent =
+            "Login.html said Connection error. Please try again.";
+          errorDiv.classList.add("show");
+        }
+      }
+    </script>
+  </body>
+</html>
